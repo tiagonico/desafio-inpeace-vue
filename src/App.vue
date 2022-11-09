@@ -1,17 +1,32 @@
 <template>
   <div id="app">
+    <NavBar/>
     <router-view/>
   </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+<script>
+import NavBar from '@/components/NavBar.vue'
 
-  margin-top: 50px;
+export default {
+  components: {
+    NavBar
+  }
+}
+</script>
+
+<style lang="scss">
+
+@import "@/scss/colors";
+@import "@/scss/variables";
+
+#app {
+
+  font-family: $fontFamily;
+  background: $colorGray;
+  background-size: cover;
+
+  margin-top: 49px;
   display: flex;
   justify-content: center;
   align-items: center;
