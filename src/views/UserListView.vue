@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%;">
     <SettingsButton />
 
     <div id="preloader" class="preloader">
@@ -37,8 +37,9 @@
       <label class="title-div__lable">Administrar usuários</label>
     </div>
 
-    <UserCard v-for="user in users" :key="user.id" :user = "user"/>
-    <div id="upper-div"></div>
+    <div class="parent">
+      <UserCard v-for="user in users" :key="user.id" :user = "user"/>
+    </div>
 
     <div class="footer-div">
       <input type="image" id="backButton" style="visibility: hidden;" :src="require('@/assets/arrow-left.jpg')"
@@ -84,19 +85,11 @@ export default {
 @import "@/scss/colors";
 @import "@/scss/variables";
 
-
 .parent {
   display: grid;
   grid-gap: 0px;
   justify-content: center;
   grid-template-columns: repeat(3, calc(33.33% - 50px));
-}
-
-.child {
-  margin: 0;
-  /* because we have grid-gap */
-  justify-content: center;
-  display: flex;
 }
 
 @media screen and (max-width: 1000px) {
@@ -110,39 +103,6 @@ export default {
     grid-template-columns: repeat(1, calc(100% - 50px));
   }
 }
-
-.column {
-  float: left;
-  width: 47.5%;
-  padding: 10px;
-}
-
-.column2 {
-  float: left;
-  width: 33%;
-  padding-top: 15px;
-  padding-bottom: 15px;
-}
-
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-/* Responsive screen using Media Queries */
-@media screen and (max-width: 900px) {
-  .column {
-    width: 100%;
-  }
-}
-
-@media screen and (max-width: 400px) {
-  .column2 {
-    width: 100%;
-  }
-}
-
 .footer-div {
   width: 100%;
   padding-top: 2rem;
