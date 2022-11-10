@@ -1,10 +1,10 @@
 <template>
   <div class="dropdown">
-    <input type="image" :src="require('@/assets/config.png')" class="dropdown__button" />
+    <input type="image" :src="require('@/assets/config.png')" @click="toggleDropdown()" class="dropdown__button" />
     <div id="myDropdown" class="dropdown__content">
       <a href="#">Configurações</a>
       <a href="#">Preferências</a>
-      <a style="color: red;" href="./../../index.html">Sair</a>
+      <a style="color: red;" href="/">Sair</a>
     </div>
   </div>
 </template>
@@ -12,12 +12,28 @@
 <script>
 
 export default {
+  methods: {
+    toggleDropdown() {
 
+      if (document.getElementById("myDropdown").style.display == "block") {
+        document.getElementById("myDropdown").style.display = "none"
+      } else {
+        document.getElementById("myDropdown").style.display = "block"
+      }
+    }
+  },
+  created() {
+    window.onclick = function (event) {
+      if (!event.target.matches('.dropdown__button')) {
+        const dropdown = document.getElementById("myDropdown")
+        dropdown.style.display = "none"
+      }
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-
 @import "@/scss/colors";
 @import "@/scss/variables";
 
@@ -41,7 +57,7 @@ export default {
     top: 0px;
     right: 0px;
     border: none;
-    cursor: pointer;    
+    cursor: pointer;
   }
 
   &__content {
@@ -51,7 +67,7 @@ export default {
     min-width: 160px;
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+    z-index: 2;
 
     a {
       text-align: end;

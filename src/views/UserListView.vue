@@ -38,15 +38,15 @@
     </div>
 
     <div class="parent">
-      <UserCard v-for="user in users" :key="user.id" :user = "user"/>
+      <UserCard v-for="user in users" :key="user.id" :user="user" />
     </div>
 
     <div class="footer-div">
       <input type="image" id="backButton" style="visibility: hidden;" :src="require('@/assets/arrow-left.jpg')"
-        class="footer-div__button" onclick="backButton()" />
+        class="footer-div__button" @click.prevent="backButton()" />
       <label id="label-footer" class="footer-div__label"> Mostrando de 1 a 6</label>
       <input type="image" id="forwardButton" :src="require('@/assets/arrow-right.jpg')" class="footer-div__button"
-        onclick="forwardButton()" style="margin-right: 8%" />
+        @click.prevent="forwardButton(2, 0)" style="margin-right: 8%" />
     </div>
   </div>
 </template>
@@ -65,18 +65,93 @@ export default {
   },
   data() {
     return {
-      users: []
+      users: [],
+      modalId: 0
     }
   },
-  created(){
-    UserService.getUsers(0,1)
-      .then(res => {
-        this.users = res.data.data;
-        console.log(this.users)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+  methods: {
+    setData(page, delay) {
+      UserService.getUsers(delay, page)
+        .then(res => {
+          this.users = res.data.data
+          console.log(this.users)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    backButton() {
+      this.setData(1, 0)
+      document.getElementById('label-footer').innerHTML = 'Mostrando de 1 a 6'
+      document.getElementById('forwardButton').style.visibility = 'visible'
+      document.getElementById('backButton').style.visibility = 'hidden'
+    },
+    forwardButton() {
+      this.setData(2, 0)
+      document.getElementById('label-footer').innerHTML = 'Mostrando de 7 a 12'
+      document.getElementById('forwardButton').style.visibility = 'hidden'
+      document.getElementById('backButton').style.visibility = 'visible'
+    },
+    toggleDropdown() {
+      document.getElementById("myDropdown").classList.toggle("show");
+    },
+    hideLoading() {
+      var loader = document.getElementById("preloader");
+      loader.style.display = "none"
+    }, showLoading() {
+      var loader = document.getElementById("preloader");
+      loader.style.display = "flex"
+    }, openModal(id) {
+
+      this.modalId = id;
+      var modal = document.getElementById("myModal");
+
+      var span = document.getElementsByClassName("close")[0];
+      span.onclick = function () {
+        modal.style.display = "none";
+      }
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+
+      var emailModal = document.getElementById("email-modal");
+      emailModal.value = document.getElementById("email-" + id).textContent;
+
+      var nameModal = document.getElementById("name-modal");
+      nameModal.value = document.getElementById("name-" + id).textContent;
+
+      modal.style.display = "flex";
+    },
+    changeUser() {
+      var modal = document.getElementById("myModal");
+
+      var name = document.getElementById("name-modal").value;
+      var email = document.getElementById("email-modal").value;
+
+      document.getElementById("name-" + this.modalId).textContent = name;
+      document.getElementById("email-" + this.modalId).textContent = email;
+
+      modal.style.display = "none";
+    }
+  },
+  created() {
+    this.setData(1, 2)
+
+    window.onclick = function (event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
   }
 }
 </script>
@@ -103,6 +178,7 @@ export default {
     grid-template-columns: repeat(1, calc(100% - 50px));
   }
 }
+
 .footer-div {
   width: 100%;
   padding-top: 2rem;
