@@ -6,12 +6,12 @@
       <div class="loader"></div>
     </div>
 
-    <div id="myModal" class="modal">
+    <div id="myModal" class="modal" >
 
       <div class="modal-content">
 
         <div class="modal-header">
-          <span class="close">&times;</span>
+          <span @click="closeModal()" class="close">&times;</span>
           <h2>Editar usuário</h2>
         </div>
         <div class="modal-body">
@@ -38,7 +38,7 @@
     </div>
 
     <div class="parent">
-      <UserCard v-for="user in users" :key="user.id" :user="user" />
+      <UserCard @modal="openModal" v-for="user in users" :key="user.id" :user="user" />
     </div>
 
     <div class="footer-div">
@@ -66,7 +66,7 @@ export default {
   data() {
     return {
       users: [],
-      modalId: 0
+      userModal: {},
     }
   },
   methods: {
@@ -74,7 +74,6 @@ export default {
       UserService.getUsers(delay, page)
         .then(res => {
           this.users = res.data.data
-          console.log(this.users)
           this.hideLoading()
         })
         .catch(err => {
@@ -96,18 +95,21 @@ export default {
     hideLoading() {
       const loader = document.getElementById("preloader");
       loader.style.display = "none"
-    }, showLoading() {
+    }, 
+    showLoading() {
       const loader = document.getElementById("preloader");
       loader.style.display = "flex"
-    }, openModal(id) {
+    }, 
+    closeModal(){
+      const modal = document.getElementById("myModal");
+      modal.style.display = "none";
+    },
+    openModal(user) {
 
-      this.modalId = id;
-      var modal = document.getElementById("myModal");
+      this.userModal = user
+      const modal = document.getElementById("myModal");
 
-      var span = document.getElementsByClassName("close")[0];
-      span.onclick = function () {
-        modal.style.display = "none";
-      }
+      
       // When the user clicks anywhere outside of the modal, close it
       window.onclick = function (event) {
         if (event.target == modal) {
@@ -115,22 +117,26 @@ export default {
         }
       }
 
-      var emailModal = document.getElementById("email-modal");
-      emailModal.value = document.getElementById("email-" + id).textContent;
+      const emailModal = document.getElementById("email-modal");
+      emailModal.value = user.email;
 
-      var nameModal = document.getElementById("name-modal");
-      nameModal.value = document.getElementById("name-" + id).textContent;
+      const nameModal = document.getElementById("name-modal");
+      nameModal.value = user.first_name + " " + user.last_name;
 
       modal.style.display = "flex";
     },
     changeUser() {
-      var modal = document.getElementById("myModal");
+      const modal = document.getElementById("myModal");
 
-      var name = document.getElementById("name-modal").value;
-      var email = document.getElementById("email-modal").value;
+      const name = document.getElementById("name-modal").value;
+      const email = document.getElementById("email-modal").value;
 
-      document.getElementById("name-" + this.modalId).textContent = name;
-      document.getElementById("email-" + this.modalId).textContent = email;
+      const firstName = name.split(" ")[0]
+      const lastName = name.split(" ")[1]
+
+      this.users[this.userModal.id - 1].email = email;
+      this.users[this.userModal.id - 1].first_name = firstName;
+      this.users[this.userModal.id - 1].last_name = lastName;
 
       modal.style.display = "none";
     }

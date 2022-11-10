@@ -47,8 +47,7 @@ export default {
     }
   },
   mounted() {
-
-
+    
     const loginForm = document.querySelector("#login");
 
     // Verifies if email and password matches with email and password in sessionStore
