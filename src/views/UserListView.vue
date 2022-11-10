@@ -26,7 +26,7 @@
           </div>
 
           <div class="modal__button-div">
-            <button onclick="changeUser()" class="modal__button">CONFIRMAR</button>
+            <button @click="changeUser()" class="modal__button">CONFIRMAR</button>
           </div>
         </div>
       </div>
@@ -75,6 +75,7 @@ export default {
         .then(res => {
           this.users = res.data.data
           console.log(this.users)
+          this.hideLoading()
         })
         .catch(err => {
           console.log(err)
@@ -92,14 +93,11 @@ export default {
       document.getElementById('forwardButton').style.visibility = 'hidden'
       document.getElementById('backButton').style.visibility = 'visible'
     },
-    toggleDropdown() {
-      document.getElementById("myDropdown").classList.toggle("show");
-    },
     hideLoading() {
-      var loader = document.getElementById("preloader");
+      const loader = document.getElementById("preloader");
       loader.style.display = "none"
     }, showLoading() {
-      var loader = document.getElementById("preloader");
+      const loader = document.getElementById("preloader");
       loader.style.display = "flex"
     }, openModal(id) {
 
@@ -137,21 +135,9 @@ export default {
       modal.style.display = "none";
     }
   },
-  created() {
+  mounted() {
+    this.showLoading()
     this.setData(1, 2)
-
-    window.onclick = function (event) {
-      if (!event.target.matches('.dropbtn')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        var i;
-        for (i = 0; i < dropdowns.length; i++) {
-          var openDropdown = dropdowns[i];
-          if (openDropdown.classList.contains('show')) {
-            openDropdown.classList.remove('show');
-          }
-        }
-      }
-    }
   }
 }
 </script>
@@ -262,7 +248,7 @@ label {
   height: 100vh;
   width: 100%;
   display: none;
-  align-items: center;
+  align-content: center;
   justify-content: center;
   position: fixed;
   z-index: 100;
