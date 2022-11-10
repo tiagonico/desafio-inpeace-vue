@@ -30,7 +30,45 @@
 </template>
 
 <script>
+import CryptoJS from 'crypto-js'
 
+export default {
+
+  data() {
+    return {
+    }
+  },
+  methods: {
+    setFormMessage: (formElement, type, message) => {
+      const messageElement = formElement.querySelector(".form__message");
+
+      messageElement.textContent = message;
+      messageElement.classList.add(`form__message--${type}`);
+    }
+  },
+  mounted() {
+
+
+    const loginForm = document.querySelector("#login");
+
+    // Verifies if email and password matches with email and password in sessionStore
+    loginForm.addEventListener("submit", e => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+
+      const emailStorage = sessionStorage.getItem("email");
+      const senhaStorage = sessionStorage.getItem("senha");
+      
+      if (email == emailStorage && senha == CryptoJS.AES.decrypt(senhaStorage, "SECRET").toString(CryptoJS.enc.Utf8)) {
+        window.location.href = "/lista-usuarios";
+      } else {
+        this.setFormMessage(loginForm, "error", "Email ou senha incorretos");
+      }
+    });
+  }
+}
 
 </script>
 

@@ -14,7 +14,7 @@
   top: 0;
   left: 0;
   text-align: center;
-  padding: 0.5rem;
+  padding: 0.5rem 0px;
   background: $colorPrimary;
 
   &__img{
