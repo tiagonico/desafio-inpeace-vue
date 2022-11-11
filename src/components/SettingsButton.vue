@@ -2,9 +2,9 @@
   <div class="dropdown">
     <input type="image" :src="require('@/assets/config.png')" @click="toggleDropdown()" class="dropdown__button" />
     <div id="myDropdown" class="dropdown__content">
-      <a href="#">Configurações</a>
-      <a href="#">Preferências</a>
-      <a style="color: red;" href="/">Sair</a>
+      <a>Configurações</a>
+      <a>Preferências</a>
+      <router-link style="color: red;" :to="{name: 'home'}">Sair</router-link>
     </div>
   </div>
 </template>
@@ -26,7 +26,10 @@ export default {
     window.onclick = function (event) {
       if (!event.target.matches('.dropdown__button')) {
         const dropdown = document.getElementById("myDropdown")
-        dropdown.style.display = "none"
+
+        if(dropdown != null){
+          dropdown.style.display = "none"
+        }
       }
     }
   }
@@ -72,6 +75,7 @@ export default {
     a {
       text-align: end;
       color: $colorPrimary;
+      cursor: pointer;
 
       font: {
         family: $fontFamily;

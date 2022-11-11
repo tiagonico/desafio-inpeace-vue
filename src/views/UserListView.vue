@@ -42,11 +42,11 @@
     </div>
 
     <div class="footer-div">
-      <input type="image" id="backButton" style="visibility: hidden;" :src="require('@/assets/arrow-left.jpg')"
-        class="footer-div__button" @click.prevent="backButton()" />
+      <input type="image" id="backButton" :src="require('@/assets/arrow-left.jpg')"
+        class="footer-div__button footer-div__button--left" @click.prevent="backButton()" />
       <label id="label-footer" class="footer-div__label"> Mostrando de 1 a 6</label>
-      <input type="image" id="forwardButton" :src="require('@/assets/arrow-right.jpg')" class="footer-div__button"
-        @click.prevent="forwardButton(2, 0)" style="margin-right: 8%" />
+      <input type="image" id="forwardButton" :src="require('@/assets/arrow-right.jpg')" class="footer-div__button footer-div__button--right"
+        @click.prevent="forwardButton(2, 0)"/>
     </div>
   </div>
 </template>
@@ -134,9 +134,10 @@ export default {
       const firstName = name.split(" ")[0]
       const lastName = name.split(" ")[1]
 
-      this.users[this.userModal.id - 1].email = email;
-      this.users[this.userModal.id - 1].first_name = firstName;
-      this.users[this.userModal.id - 1].last_name = lastName;
+      const user = this.users.find( user => user.id == this.userModal.id)
+      user.email = email;
+      user.first_name = firstName;
+      user.last_name = lastName;
 
       modal.style.display = "none";
     }
@@ -180,6 +181,16 @@ export default {
   &__button {
     width: 12px;
     height: 12px;
+
+    &--left{
+      visibility: hidden;
+      padding-right: 10px;
+    }
+
+    &--right{
+      margin-right: 8%;
+      padding-left: 10px;
+    }
 
     &:active {
       transform: scale(0.9);

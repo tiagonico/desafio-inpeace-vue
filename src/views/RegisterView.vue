@@ -1,68 +1,70 @@
 <template>
-  <div>
-    <div class="container">
 
-      <form id="signup">
-        <h1 class="form__title">Cadastro</h1>
+  <div class="container">
 
-        <div class="row">
-          <div class="column">
-            <div class="form__input-group">
-              <label class="label">Nome Completo</label>
-              <input id="nome" type="text" class="form__input" required>
-            </div>
-            <div class="form__input-group">
-              <label class="label">Estado</label>
-              <select id="estado" class="form__input" required>
-              </select>
-            </div>
-            <div class="form__input-group">
-              <label class="label">Senha</label>
-              <input @change="validatePassword" minlength="6" id="senha" type="password" class="form__input" autocomplete="" required>
-              <label class="label__senha">A senha deve ter no mínimo 6 caracteres</label>
-            </div>
+    <form id="signup">
+      <h1 class="form__title">Cadastro</h1>
+
+      <div class="row">
+        <div class="column">
+          <div class="form__input-group">
+            <label class="label">Nome Completo</label>
+            <input id="nome" type="text" class="form__input" required>
           </div>
-          <div class="column">
-            <div class="form__input-group">
-              <label class="label">E-mail</label>
-              <input id="email" type="email" class="form__input" required>
-            </div>
-            <div class="form__input-group">
-              <label class="label">Sexo</label>
-              <div class="row">
-                <div class="column2">
-                  <input name="sexo" type="radio" id="feminino" value="feminino" required>
-                  <label class="label__radio" for="feminino">Feminino</label><br>
-                </div>
-                <div class="column2">
-                  <input name="sexo" type="radio" id="masculino" value="masculino">
-                  <label class="label__radio" for="masculino">Masculino</label><br>
-                </div>
-                <div class="column2">
-                  <input name="sexo" type="radio" id="outro" value="outro">
-                  <label class="label__radio" for="outro">Outro</label><br>
-                </div>
+          <div class="form__input-group">
+            <label class="label">Estado</label>
+            <select id="estado" class="form__input" required>
+            </select>
+          </div>
+          <div class="form__input-group">
+            <label class="label">Senha</label>
+            <input @change="validatePassword" minlength="6" id="senha" type="password" class="form__input"
+              autocomplete="" required>
+            <label class="label__senha">A senha deve ter no mínimo 6 caracteres</label>
+          </div>
+        </div>
+        <div class="column">
+          <div class="form__input-group">
+            <label class="label">E-mail</label>
+            <input id="email" type="email" class="form__input" required>
+          </div>
+          <div class="form__input-group">
+            <label class="label">Sexo</label>
+            <div class="row">
+              <div class="column2">
+                <input name="sexo" type="radio" id="feminino" value="feminino" required>
+                <label class="label__radio" for="feminino">Feminino</label><br>
+              </div>
+              <div class="column2">
+                <input name="sexo" type="radio" id="masculino" value="masculino">
+                <label class="label__radio" for="masculino">Masculino</label><br>
+              </div>
+              <div class="column2">
+                <input name="sexo" type="radio" id="outro" value="outro">
+                <label class="label__radio" for="outro">Outro</label><br>
               </div>
             </div>
-            <div class="form__input-group">
-              <label class="label">Confirmar Senha</label>
-              <input @keyup="validatePassword" minlength="6" id="confirmarSenha" type="password" class="form__input" autocomplete="" required>
-            </div>
+          </div>
+          <div class="form__input-group">
+            <label class="label">Confirmar Senha</label>
+            <input @keyup="validatePassword" minlength="6" id="confirmarSenha" type="password" class="form__input"
+              autocomplete="" required>
           </div>
         </div>
+      </div>
 
-        <div class="div__button">
-          <button type="submit" class="form__button">CADASTRAR</button>
-        </div>
-      </form>
+      <div class="div__button">
+        <button type="submit" class="form__button">CADASTRAR</button>
+      </div>
+    </form>
 
-      <p class="form__text">
-        Já tem uma conta?
-        <a class="form__link" href="/" id="linkLogin">Entre aqui</a>
-      </p>
+    <p class="form__text">
+      Já tem uma conta?
+      <router-link class="form__link" :to="{ name: 'home' }">Entre aqui</router-link>
+    </p>
 
-    </div>
   </div>
+
 </template>
 
 <script>
@@ -101,15 +103,15 @@ export default {
 
     signupForm.addEventListener("submit", e => {
       e.preventDefault();
- 
+
       const email = document.getElementById("email").value
       const senha = document.getElementById("senha").value
       const senhaCripto = CryptoJS.AES.encrypt(senha, "SECRET").toString();
-      console.log(email,senhaCripto)
+
       sessionStorage.setItem("email", email);
       sessionStorage.setItem("senha", senhaCripto);
 
-      window.location.href = "/";
+      this.$router.push({ name: "home" })
     });
   }
 }

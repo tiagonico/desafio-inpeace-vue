@@ -1,32 +1,30 @@
 <template>
-  <div>
 
-    <div class="container">
-      <form id="login">
+  <div class="container">
+    <form class="login">
 
-        <h1 class="form__title">Acessar</h1>
-        <div class="form__message form__message--error"></div>
+      <h1 class="form__title">Acessar</h1>
+      <div class="form__message form__message--error"></div>
 
-        <div class="form__input-group">
-          <label>E-mail</label>
-          <input id="email" type="email" class="form__input" required>
-        </div>
-        <div class="form__input-group">
-          <label>Senha</label>
-          <input id="senha" type="password" class="form__input" autocomplete="" required>
-        </div>
+      <div class="form__input-group">
+        <label>E-mail</label>
+        <input ref="email" type="email" class="form__input" autocomplete="" required>
+      </div>
+      <div class="form__input-group">
+        <label>Senha</label>
+        <input ref="senha" type="password" class="form__input" autocomplete="current-password" required>
+      </div>
 
-        <div class="div__button">
-          <button type="submit" class="form__button">ENTRAR</button>
-        </div>
-      </form>
-      <p class="form__text">
-        Não possui conta?
-        <a class="form__link" href="/cadastro" id="linkCreateAccount">Cadastre-se aqui</a>
-      </p>
-    </div>
-
+      <div class="div__button">
+        <button type="submit" class="form__button">ENTRAR</button>
+      </div>
+    </form>
+    <p class="form__text">
+      Não possui conta?
+      <router-link class="form__link" :to="{ name: 'register' }">Cadastre-se aqui</router-link>
+    </p>
   </div>
+
 </template>
 
 <script>
@@ -47,21 +45,21 @@ export default {
     }
   },
   mounted() {
-    
-    const loginForm = document.querySelector("#login");
+
+    const loginForm = document.querySelector(".login");
 
     // Verifies if email and password matches with email and password in sessionStore
     loginForm.addEventListener("submit", e => {
       e.preventDefault();
 
-      const email = document.getElementById("email").value;
-      const senha = document.getElementById("senha").value;
+      const email = this.$refs.email.value
+      const senha = this.$refs.senha.value;
 
       const emailStorage = sessionStorage.getItem("email");
       const senhaStorage = sessionStorage.getItem("senha");
-      
+
       if (email == emailStorage && senha == CryptoJS.AES.decrypt(senhaStorage, "SECRET").toString(CryptoJS.enc.Utf8)) {
-        window.location.href = "/lista-usuarios";
+        this.$router.push({ name: "user-list" })
       } else {
         this.setFormMessage(loginForm, "error", "Email ou senha incorretos");
       }
