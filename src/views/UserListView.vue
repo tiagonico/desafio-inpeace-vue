@@ -2,60 +2,66 @@
   <div style="width: 100%;">
     <SettingsButton />
 
-    <div id="preloader" class="preloader">
-      <div class="loader"></div>
-    </div>
+    <template v-if="loading">
+      <div id="preloader" class="preloader">
+        <div class="loader"></div>
+      </div>
+    </template>
 
-    <div id="myModal" class="modal" >
+    <template v-else>
 
-      <div class="modal-content">
+      <div id="myModal" class="modal">
 
-        <div class="modal-header">
-          <span @click="closeModal()" class="close">&times;</span>
-          <h2>Editar usuário</h2>
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <span @click="closeModal()" class="close">&times;</span>
+            <h2>Editar usuário</h2>
+          </div>
+          <div class="modal-body">
+
+            <div style="padding-top: 2rem;" class="modal__input-group">
+              <label>Nome</label>
+              <input id="name-modal" type="text" class="modal__input" required>
+            </div>
+            <div class="modal__input-group">
+              <label>E-mail</label>
+              <input id="email-modal" type="email" class="modal__input" autocomplete="" required>
+            </div>
+
+            <div class="modal__button-div">
+              <button @click="changeUser()" class="modal__button">CONFIRMAR</button>
+            </div>
+          </div>
         </div>
-        <div class="modal-body">
 
-          <div style="padding-top: 2rem;" class="modal__input-group">
-            <label>Nome</label>
-            <input id="name-modal" type="text" class="modal__input" required>
-          </div>
-          <div class="modal__input-group">
-            <label>E-mail</label>
-            <input id="email-modal" type="email" class="modal__input" autocomplete="" required>
-          </div>
-
-          <div class="modal__button-div">
-            <button @click="changeUser()" class="modal__button">CONFIRMAR</button>
-          </div>
-        </div>
       </div>
 
-    </div>
+      <div class="title-div">
+        <label class="title-div__lable">Administrar usuários</label>
+      </div>
 
-    <div class="title-div">
-      <label class="title-div__lable">Administrar usuários</label>
-    </div>
+      <div class="parent">
+        <UserCard @modal="openModal" v-for="user in users" :key="user.id" :user="user" />
+      </div>
 
-    <div class="parent">
-      <UserCard @modal="openModal" v-for="user in users" :key="user.id" :user="user" />
-    </div>
+      <div class="footer-div">
+        <input type="image" id="backButton" :src="require('@/assets/arrow-left.jpg')"
+          class="footer-div__button footer-div__button--left" @click.prevent="backButton()" />
+        <label id="label-footer" class="footer-div__label"> {{labelFooter}}</label>
+        <input type="image" id="forwardButton" :src="require('@/assets/arrow-right.jpg')"
+          class="footer-div__button footer-div__button--right" @click.prevent="forwardButton(2, 0)" />
+      </div>
 
-    <div class="footer-div">
-      <input type="image" id="backButton" :src="require('@/assets/arrow-left.jpg')"
-        class="footer-div__button footer-div__button--left" @click.prevent="backButton()" />
-      <label id="label-footer" class="footer-div__label"> Mostrando de 1 a 6</label>
-      <input type="image" id="forwardButton" :src="require('@/assets/arrow-right.jpg')" class="footer-div__button footer-div__button--right"
-        @click.prevent="forwardButton(2, 0)"/>
-    </div>
+    </template>
   </div>
 </template>
 
 <script>
 
 import SettingsButton from '@/components/SettingsButton.vue'
-import UserService from '@/services/UserService';
 import UserCard from '@/components/UserCard.vue';
+import { mapState } from 'vuex';
 
 export default {
   name: 'UserListView',
@@ -65,63 +71,45 @@ export default {
   },
   data() {
     return {
-      users: [],
-      userModal: {},
+      loading: false,
+      labelFooter: ""
     }
   },
   methods: {
-    setData(page, delay) {
-      UserService.getUsers(delay, page)
-        .then(res => {
-          this.users = res.data.data
-          this.hideLoading()
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
     backButton() {
-      this.setData(1, 0)
-      document.getElementById('label-footer').innerHTML = 'Mostrando de 1 a 6'
-      document.getElementById('forwardButton').style.visibility = 'visible'
-      document.getElementById('backButton').style.visibility = 'hidden'
+      this.getUsers(0, 1).then( ()=>{
+        this.labelFooter = 'Mostrando de 1 a 6';
+        document.getElementById('forwardButton').style.visibility = 'visible'
+        document.getElementById('backButton').style.visibility = 'hidden'
+      })
+      
     },
     forwardButton() {
-      this.setData(2, 0)
-      document.getElementById('label-footer').innerHTML = 'Mostrando de 7 a 12'
-      document.getElementById('forwardButton').style.visibility = 'hidden'
-      document.getElementById('backButton').style.visibility = 'visible'
+      this.getUsers(0, 2).then( ()=>{
+        this.labelFooter = 'Mostrando de 7 a 12';      
+        document.getElementById('forwardButton').style.visibility = 'hidden'
+        document.getElementById('backButton').style.visibility = 'visible'
+      })    
+      
     },
-    hideLoading() {
-      const loader = document.getElementById("preloader");
-      loader.style.display = "none"
-    }, 
-    showLoading() {
-      const loader = document.getElementById("preloader");
-      loader.style.display = "flex"
-    }, 
-    closeModal(){
+    closeModal() {
       const modal = document.getElementById("myModal");
       modal.style.display = "none";
     },
-    openModal(user) {
+    openModal() {
 
-      this.userModal = user
       const modal = document.getElementById("myModal");
 
-      
-      // When the user clicks anywhere outside of the modal, close it
       window.onclick = function (event) {
         if (event.target == modal) {
           modal.style.display = "none";
         }
       }
-
       const emailModal = document.getElementById("email-modal");
-      emailModal.value = user.email;
+      emailModal.value = this.user.email;
 
       const nameModal = document.getElementById("name-modal");
-      nameModal.value = user.first_name + " " + user.last_name;
+      nameModal.value = this.user.first_name + " " + this.user.last_name;
 
       modal.style.display = "flex";
     },
@@ -134,18 +122,31 @@ export default {
       const firstName = name.split(" ")[0]
       const lastName = name.split(" ")[1]
 
-      const user = this.users.find( user => user.id == this.userModal.id)
-      user.email = email;
-      user.first_name = firstName;
-      user.last_name = lastName;
+      this.$store.dispatch('updateUser', {
+        email: email,
+        firstName: firstName,
+        lastName: lastName
+      })
 
       modal.style.display = "none";
+    },
+    async getUsers(delay, page) {
+      this.loading = true
+      await this.$store.dispatch('fetchUsers', {
+        delay: delay,
+        page: page
+      }).then(() => {
+        this.loading = false
+      })
     }
   },
   mounted() {
-    this.showLoading()
-    this.setData(1, 2)
-  }
+
+    this.labelFooter = 'Mostrando de 1 a 6';
+    this.getUsers(2, 1);
+
+  },
+  computed: mapState(['users','user'])
 }
 </script>
 
@@ -182,12 +183,13 @@ export default {
     width: 12px;
     height: 12px;
 
-    &--left{
+    &--left {
       visibility: hidden;
       padding-right: 10px;
     }
 
-    &--right{
+    &--right {
+      visibility: visible;
       margin-right: 8%;
       padding-left: 10px;
     }
@@ -264,7 +266,7 @@ label {
   background-size: 50%;
   height: 100vh;
   width: 100%;
-  display: none;
+  display: flex;
   align-content: center;
   justify-content: center;
   position: fixed;

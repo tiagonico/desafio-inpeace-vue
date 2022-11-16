@@ -2,7 +2,7 @@
   <div class="child">
     <div class="container">
       <div class="item item__button">
-        <input @click="$emit('modal', user)" type="image" :src="require('@/assets/edit-icon.png')" class="edit-button" />
+        <input @click="openModal()" type="image" :src="require('@/assets/edit-icon.png')" class="edit-button" />
       </div>
       <div class="item">
         <img class="item__img" :src="user.avatar">
@@ -25,7 +25,10 @@ export default {
     user: Object
   },
   methods: {
-    
+    openModal(){
+      this.$store.dispatch('setUser', this.user)
+      this.$emit('modal')
+    }
   }
 
 }
