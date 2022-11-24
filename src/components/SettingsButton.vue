@@ -1,10 +1,10 @@
 <template>
   <div class="dropdown">
     <input type="image" :src="require('@/assets/config.png')" @click="toggleDropdown()" class="dropdown__button" />
-    <div id="myDropdown" class="dropdown__content">
+    <div v-show="showDropdown" class="dropdown__content">
       <a>Configurações</a>
       <a>Preferências</a>
-      <router-link style="color: red;" :to="{name: 'home'}">Sair</router-link>
+      <router-link style="color: red" :to="{name: 'home'}">Sair</router-link>
     </div>
   </div>
 </template>
@@ -12,14 +12,14 @@
 <script>
 
 export default {
+  data() {
+    return {
+      showDropdown: false
+    }
+  },
   methods: {
     toggleDropdown() {
-
-      if (document.getElementById("myDropdown").style.display == "block") {
-        document.getElementById("myDropdown").style.display = "none"
-      } else {
-        document.getElementById("myDropdown").style.display = "block"
-      }
+      this.showDropdown = !this.showDropdown
     }
   },
   created() {
@@ -64,7 +64,7 @@ export default {
   }
 
   &__content {
-    display: none;
+    display: block;
     position: absolute;
     background-color: #f1f1f1;
     min-width: 160px;
@@ -87,5 +87,7 @@ export default {
       display: block;
     }
   }
+
+
 }
 </style>
