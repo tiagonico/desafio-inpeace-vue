@@ -1,18 +1,18 @@
 <template>
 
   <div class="container">
-    <form class="login">
+    <form @submit.prevent="submit">
 
       <h1 class="form__title">Acessar</h1>
-      <div class="form__message form__message--error"></div>
+      <div class="form__message form__message--error">{{formMessage}}</div>
 
       <div class="form__input-group">
         <label>E-mail</label>
-        <input ref="email" type="email" class="form__input" autocomplete="" required>
+        <input v-model="form.email" type="email" class="form__input" autocomplete="" required>
       </div>
       <div class="form__input-group">
         <label>Senha</label>
-        <input ref="senha" type="password" class="form__input" autocomplete="current-password" required>
+        <input v-model="form.password" type="password" class="form__input" autocomplete="current-password" required>
       </div>
 
       <div class="div__button">
@@ -34,26 +34,17 @@ export default {
 
   data() {
     return {
+      form: {
+        email: "",
+        password: ""
+      },
+      formMessage: ""
     }
   },
   methods: {
-    setFormMessage: (formElement, type, message) => {
-      const messageElement = formElement.querySelector(".form__message");
-
-      messageElement.textContent = message;
-      messageElement.classList.add(`form__message--${type}`);
-    }
-  },
-  mounted() {
-
-    const loginForm = document.querySelector(".login");
-
-    // Verifies if email and password matches with email and password in sessionStore
-    loginForm.addEventListener("submit", e => {
-      e.preventDefault();
-
-      const email = this.$refs.email.value
-      const senha = this.$refs.senha.value;
+    submit(){
+      const email = this.form.email;
+      const senha = this.form.password;
 
       const emailStorage = sessionStorage.getItem("email");
       const senhaStorage = sessionStorage.getItem("senha");
@@ -61,9 +52,9 @@ export default {
       if (email == emailStorage && senha == CryptoJS.AES.decrypt(senhaStorage, "SECRET").toString(CryptoJS.enc.Utf8)) {
         this.$router.push({ name: "user-list" })
       } else {
-        this.setFormMessage(loginForm, "error", "Email ou senha incorretos");
+        this.formMessage = "Email ou senha incorretos";
       }
-    });
+    }
   }
 }
 
