@@ -2,53 +2,59 @@
 
   <div class="container">
 
-    <form id="signup">
+    <form @submit.prevent="submit">
       <h1 class="form__title">Cadastro</h1>
 
       <div class="row">
         <div class="column">
           <div class="form__input-group">
             <label class="label">Nome Completo</label>
-            <input id="nome" type="text" class="form__input" required>
+            <input type="text" class="form__input" v-model="form.fullName" required>
           </div>
           <div class="form__input-group">
             <label class="label">Estado</label>
-            <select id="estado" class="form__input" required>
+            <select class="form__input" v-model="form.stateId" required>
+              <option
+                v-for="(state, index) in brazilStates"
+                :key="state.codigo"
+                :value="index == 0 ? '' : index"
+                :disabled="index == 0"
+                class="option">{{ state.nome }}</option>
             </select>
           </div>
           <div class="form__input-group">
             <label class="label">Senha</label>
-            <input @change="validatePassword" minlength="6" id="senha" type="password" class="form__input"
-              autocomplete="" required>
+            <input @change="validatePassword" minlength="6" type="password" class="form__input" autocomplete=""
+              v-model="form.password" required>
             <label class="label__senha">A senha deve ter no mínimo 6 caracteres</label>
           </div>
         </div>
         <div class="column">
           <div class="form__input-group">
             <label class="label">E-mail</label>
-            <input id="email" type="email" class="form__input" required>
+            <input type="email" class="form__input" v-model="form.email" required>
           </div>
           <div class="form__input-group">
             <label class="label">Sexo</label>
             <div class="row">
               <div class="column2">
-                <input name="sexo" type="radio" id="feminino" value="feminino" required>
+                <input name="sexo" type="radio" value="feminino" v-model="form.sex" required>
                 <label class="label__radio" for="feminino">Feminino</label><br>
               </div>
               <div class="column2">
-                <input name="sexo" type="radio" id="masculino" value="masculino">
+                <input name="sexo" type="radio" value="masculino" v-model="form.sex">
                 <label class="label__radio" for="masculino">Masculino</label><br>
               </div>
               <div class="column2">
-                <input name="sexo" type="radio" id="outro" value="outro">
+                <input name="sexo" type="radio" value="outro" v-model="form.sex">
                 <label class="label__radio" for="outro">Outro</label><br>
               </div>
             </div>
           </div>
           <div class="form__input-group">
             <label class="label">Confirmar Senha</label>
-            <input @keyup="validatePassword" minlength="6" id="confirmarSenha" type="password" class="form__input"
-              autocomplete="" required>
+            <input @keyup="validatePassword" minlength="6" type="password" class="form__input" autocomplete=""
+              v-model="form.confirmPassword" required>
           </div>
         </div>
       </div>
@@ -69,50 +75,50 @@
 
 <script>
 
-import brazilStates from '@/json/brazil-states.json'
+import brazilStatesJson from '@/json/brazil-states.json'
 import CryptoJS from 'crypto-js'
 
 export default {
 
   data() {
     return {
+      form: {
+        fullName: '',
+        stateId: '',
+        email: '',
+        sex: '',
+        password: '',
+        confirmPassword: ''
+      },
+      brazilStates: [
+        { 
+          nome: "Selecionar" 
+        }, 
+        ...brazilStatesJson
+      ]
     }
   },
   methods: {
     validatePassword: () => {
-      const senha = document.getElementById("senha");
-      const confirmarSenha = document.getElementById("confirmarSenha");
+      const senha = this.form.password
+      const confirmarSenha = this.form.confirmPassword
       if (senha.value != confirmarSenha.value) {
         confirmarSenha.setCustomValidity("As senhas devem ser iguais");
       } else {
         confirmarSenha.setCustomValidity('');
       }
-    }
+    },
+    submit() {
 
-  },
-  mounted() {
-
-    let options = `<option class="option" disabled selected value>Selecionar</option>`
-    brazilStates.forEach((state, index) => {
-      options += `<option class="option" value='${index}'>${state.nome}</option>`
-    })
-    document.getElementById('estado').innerHTML = options;
-
-    // Saves Email and Password in sessionStorage
-    const signupForm = document.querySelector("#signup");
-
-    signupForm.addEventListener("submit", e => {
-      e.preventDefault();
-
-      const email = document.getElementById("email").value
-      const senha = document.getElementById("senha").value
+      const email = this.form.email
+      const senha = this.form.password
       const senhaCripto = CryptoJS.AES.encrypt(senha, "SECRET").toString();
 
       sessionStorage.setItem("email", email);
       sessionStorage.setItem("senha", senhaCripto);
 
       this.$router.push({ name: "home" })
-    });
+    }
   }
 }
 
