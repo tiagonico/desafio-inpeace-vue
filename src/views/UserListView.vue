@@ -11,7 +11,7 @@
 
     <template v-else>
 
-      <div id="myModal" class="modal">
+      <div id="myModal" class="modal" v-show="showModal">
 
         <div class="modal-content">
 
@@ -23,11 +23,11 @@
 
             <div style="padding-top: 2rem;" class="modal__input-group">
               <label>Nome</label>
-              <input id="name-modal" type="text" class="modal__input" required>
+              <input v-model="modal.name" id="name-modal" type="text" class="modal__input" required>
             </div>
             <div class="modal__input-group">
               <label>E-mail</label>
-              <input id="email-modal" type="email" class="modal__input" autocomplete="" required>
+              <input v-model="modal.email" id="email-modal" type="email" class="modal__input" autocomplete="" required>
             </div>
 
             <div class="modal__button-div">
@@ -74,7 +74,11 @@ export default {
     return {
       loading: false,
       labelFooter: "",
-      eventTarget: null
+      showModal: false,
+      modal: {
+        name: "",
+        email: ""
+      }
     }
   },
   methods: {
@@ -107,11 +111,9 @@ export default {
           modal.style.display = "none";
         }
       }
-      const emailModal = document.getElementById("email-modal");
-      emailModal.value = this.user.email;
-
-      const nameModal = document.getElementById("name-modal");
-      nameModal.value = this.user.first_name + " " + this.user.last_name;
+      
+      this.modal.email = this.user.email;
+      this.modal.name = this.user.first_name + " " + this.user.last_name;
 
       modal.style.display = "flex";
     },
