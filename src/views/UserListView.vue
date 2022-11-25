@@ -1,6 +1,7 @@
 <template>
   <div style="width: 100%;">
-    <SettingsButton />
+
+    <SettingsButton :eventTarget="eventTarget"/>
 
     <template v-if="loading">
       <div id="preloader" class="preloader">
@@ -72,7 +73,8 @@ export default {
   data() {
     return {
       loading: false,
-      labelFooter: ""
+      labelFooter: "",
+      eventTarget: null
     }
   },
   methods: {
@@ -91,6 +93,12 @@ export default {
         document.getElementById('backButton').style.visibility = 'visible'
       })    
       
+    },
+    beforeDestroy() {
+      window.removeEventListener('click', this.onClick);
+    },
+    onClick(e) {      
+      this.eventTarget = e.target
     },
     closeModal() {
       const modal = document.getElementById("myModal");
@@ -142,6 +150,7 @@ export default {
   },
   mounted() {
 
+    window.addEventListener('click', this.onClick);
     this.labelFooter = 'Mostrando de 1 a 6';
     this.getUsers(2, 1);
 

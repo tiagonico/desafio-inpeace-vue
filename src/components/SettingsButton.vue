@@ -1,6 +1,6 @@
 <template>
   <div class="dropdown">
-    <input type="image" :src="require('@/assets/config.png')" @click="toggleDropdown()" class="dropdown__button" />
+    <input type="image" :src="require('@/assets/config.png')" @click.prevent="toggleDropdown()" class="dropdown__button" />
     <div v-show="showDropdown" class="dropdown__content">
       <a>Configurações</a>
       <a>Preferências</a>
@@ -17,20 +17,19 @@ export default {
       showDropdown: false
     }
   },
+  props: {
+    eventTarget: HTMLElement
+  },
   methods: {
     toggleDropdown() {
       this.showDropdown = !this.showDropdown
     }
   },
-  created() {
-    window.onclick = function (event) {
-      if (!event.target.matches('.dropdown__button')) {
-        const dropdown = document.getElementById("myDropdown")
-
-        if(dropdown != null){
-          dropdown.style.display = "none"
-        }
-      }
+  watch: {
+    eventTarget: function(newValue){
+      if(!this.$el.contains(newValue)){
+        this.showDropdown = false
+      }      
     }
   }
 }
