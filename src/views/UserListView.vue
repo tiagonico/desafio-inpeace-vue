@@ -1,7 +1,7 @@
 <template>
   <div style="width: 100%;">
 
-    <SettingsButton :eventTarget="eventTarget"/>
+    <SettingsButton/>
 
     <template v-if="loading">
       <div id="preloader" class="preloader">
@@ -94,12 +94,6 @@ export default {
       })    
       
     },
-    beforeDestroy() {
-      window.removeEventListener('click', this.onClick);
-    },
-    onClick(e) {      
-      this.eventTarget = e.target
-    },
     closeModal() {
       const modal = document.getElementById("myModal");
       modal.style.display = "none";
@@ -149,11 +143,8 @@ export default {
     }
   },
   mounted() {
-
-    window.addEventListener('click', this.onClick);
     this.labelFooter = 'Mostrando de 1 a 6';
     this.getUsers(2, 1);
-
   },
   computed: mapState(['users','user'])
 }

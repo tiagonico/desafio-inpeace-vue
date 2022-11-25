@@ -17,20 +17,21 @@ export default {
       showDropdown: false
     }
   },
-  props: {
-    eventTarget: HTMLElement
-  },
   methods: {
     toggleDropdown() {
       this.showDropdown = !this.showDropdown
+    },
+    onClick(e) {      
+      if(!this.$el.contains(e.target)){
+        this.showDropdown = false
+      }  
     }
   },
-  watch: {
-    eventTarget: function(newValue){
-      if(!this.$el.contains(newValue)){
-        this.showDropdown = false
-      }      
-    }
+  mounted() {
+    window.addEventListener('click', this.onClick);
+  },
+  beforeDestroy() {
+      window.removeEventListener('click', this.onClick);
   }
 }
 </script>
