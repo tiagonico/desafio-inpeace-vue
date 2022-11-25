@@ -1,33 +1,33 @@
 <template>
-  <div style="width: 100%;">
+  <div class="main">
 
     <SettingsButton/>
 
     <template v-if="loading">
-      <div id="preloader" class="preloader">
+      <div class="preloader">
         <div class="loader"></div>
       </div>
     </template>
 
     <template v-else>
 
-      <div id="myModal" class="modal" v-show="showModal">
+      <div ref="myModal" class="modal" v-show="showModal">
 
         <div class="modal-content">
 
           <div class="modal-header">
-            <span @click="closeModal()" class="close">&times;</span>
+            <span  @click="closeModal()" class="close">&times;</span>
             <h2>Editar usuário</h2>
           </div>
           <div class="modal-body">
 
-            <div style="padding-top: 2rem;" class="modal__input-group">
+            <div class="modal__input-group modal__input-group--first">
               <label>Nome</label>
-              <input v-model="modal.name" id="name-modal" type="text" class="modal__input" required>
+              <input v-model="modal.name" type="text" class="modal__input" required>
             </div>
             <div class="modal__input-group">
               <label>E-mail</label>
-              <input v-model="modal.email" id="email-modal" type="email" class="modal__input" autocomplete="" required>
+              <input v-model="modal.email" type="email" class="modal__input" autocomplete="" required>
             </div>
 
             <div class="modal__button-div">
@@ -47,11 +47,12 @@
       </div>
 
       <div class="footer-div">
-        <input type="image" id="backButton" :src="require('@/assets/arrow-left.jpg')"
+        <input type="image" v-show="showBackButton" :src="require('@/assets/arrow-left.jpg')"
           class="footer-div__button footer-div__button--left" @click.prevent="backButton()" />
-        <label id="label-footer" class="footer-div__label"> {{labelFooter}}</label>
-        <input type="image" id="forwardButton" :src="require('@/assets/arrow-right.jpg')"
+        <label class="footer-div__label"> {{labelFooter}}</label>
+        <input type="image" v-show="showForwardButton" :src="require('@/assets/arrow-right.jpg')"
           class="footer-div__button footer-div__button--right" @click.prevent="forwardButton(2, 0)" />
+        <span></span>
       </div>
 
     </template>
@@ -75,6 +76,8 @@ export default {
       loading: false,
       labelFooter: "",
       showModal: false,
+      showBackButton: false,
+      showForwardButton: true,
       modal: {
         name: "",
         email: ""
@@ -85,43 +88,37 @@ export default {
     backButton() {
       this.getUsers(0, 1).then( ()=>{
         this.labelFooter = 'Mostrando de 1 a 6';
-        document.getElementById('forwardButton').style.visibility = 'visible'
-        document.getElementById('backButton').style.visibility = 'hidden'
+        this.showForwardButton = true
+        this.showBackButton = false
       })
       
     },
     forwardButton() {
       this.getUsers(0, 2).then( ()=>{
         this.labelFooter = 'Mostrando de 7 a 12';      
-        document.getElementById('forwardButton').style.visibility = 'hidden'
-        document.getElementById('backButton').style.visibility = 'visible'
+        this.showForwardButton = false
+        this.showBackButton = true
       })    
       
     },
     closeModal() {
-      const modal = document.getElementById("myModal");
-      modal.style.display = "none";
+      this.showModal = false
     },
     openModal() {
-
-      const modal = document.getElementById("myModal");
-
-      window.onclick = function (event) {
-        if (event.target == modal) {
-          modal.style.display = "none";
-        }
-      }
-      
+      this.showModal = true      
       this.modal.email = this.user.email;
-      this.modal.name = this.user.first_name + " " + this.user.last_name;
-
-      modal.style.display = "flex";
+      this.modal.name = this.user.first_name + " " + this.user.last_name;      
+    },
+    onClick(e) {   
+      const modal = this.$refs.myModal
+      if(modal == e.target){
+        this.showModal = false
+      }  
     },
     changeUser() {
-      const modal = document.getElementById("myModal");
 
-      const name = document.getElementById("name-modal").value;
-      const email = document.getElementById("email-modal").value;
+      const name = this.modal.name
+      const email = this.modal.email
 
       const firstName = name.split(" ")[0]
       const lastName = name.split(" ")[1]
@@ -132,7 +129,7 @@ export default {
         lastName: lastName
       })
 
-      modal.style.display = "none";
+      this.showModal = false
     },
     async getUsers(delay, page) {
       this.loading = true
@@ -145,8 +142,12 @@ export default {
     }
   },
   mounted() {
+    window.addEventListener('click', this.onClick);
     this.labelFooter = 'Mostrando de 1 a 6';
     this.getUsers(2, 1);
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.onClick);
   },
   computed: mapState(['users','user'])
 }
@@ -175,24 +176,28 @@ export default {
   }
 }
 
+.main {
+  width: 100%
+}
 .footer-div {
   width: 100%;
   padding-top: 2rem;
   padding-bottom: 2rem;
   text-align: end;
 
+  span{
+    margin-right: 8%;
+  }
+  
   &__button {
     width: 12px;
     height: 12px;
 
     &--left {
-      visibility: hidden;
       padding-right: 10px;
     }
 
     &--right {
-      visibility: visible;
-      margin-right: 8%;
       padding-left: 10px;
     }
 
@@ -296,7 +301,7 @@ label {
 }
 
 .modal {
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   position: fixed;
@@ -337,6 +342,14 @@ label {
     padding: 2px 16px;
     background-color: $colorPrimary;
     color: white;
+
+    span {
+      margin-top: 1rem;
+      margin-right: 0.5rem;
+    }
+    h2{
+      margin-left: 1rem;
+    }
   }
 
 
@@ -357,6 +370,10 @@ label {
       margin-bottom: 1rem;
       padding-left: 10%;
       padding-right: 10%;
+
+      &--first{
+        padding-top: 2rem;
+      }
     }
   }
 
